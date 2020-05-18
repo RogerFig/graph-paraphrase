@@ -1,6 +1,8 @@
 #!/bin/bash
 
+echo "Creating embeddings folder"
 mkdir -m 777 "embeddings"
+echo "Done!!!"
 
 echo "Downloading Word2Vec skip_s50"
 wget http://143.107.183.175:22980/download.php?file=embeddings/word2vec/skip_s50.zip -O skip_s50.zip
