@@ -38,32 +38,44 @@ class Regularization:
                 f.write('%d\n'%i)
 
         labels = ['p','nao_p']
+        columns = ['id',labels[0],labels[1],'classe']
+        rows_train = []
+        rows_test = []
+
         if method == 'gfhf':
             F = harmonic_function(G)
         elif method == 'llgc':
             F = local_and_global_consistency(G)
+
+        if method in ['gfhf','llgc']:
+            for key in sentence_nodes.keys():
+                id_node = sentence_nodes[key]
+                split_key_node = key.split('_')
+                t = split_key_node[0]
+                cod = int(split_key_node[1])
+                if t == 'train':
+                    rows_train.append([id_node,F[id_node][0],F[id_node][1],train_labels[cod]])
+
+                if t == 'test':
+                    rows_test.append([id_node,F[id_node][0],F[id_node][1]])
         elif method == 'gnetmine':
             M = GNetMine(graph = G)
             c = M.run()
             F = M.f['sentence_pair']
             labels = M.labels
-        columns = ['id',labels[0],labels[1],'classe']
-        rows_train = []
-        rows_test = []
-        print(len(F))
-        for key in sentence_nodes.keys():
-            id_node = sentence_nodes[key]
-            split_key_node = key.split('_')
-            t = split_key_node[0]
-            cod = int(split_key_node[1])
-            if t == 'train':
-                try:
-                    rows_train.append([id_node,F[id_node][0],F[id_node][1],train_labels[cod]])
-                except Exception:
-                    print(cod)
+            nodes = M.nodes_type['sentence_pair']
+            dict_nodes = {k:i for i,k in enumerate(nodes)}
+            for key in sentence_nodes.keys():
+                id_node = sentence_nodes[key]
+                split_key_node = key.split('_')
+                t = split_key_node[0]
+                cod = int(split_key_node[1])
+                if t == 'train':
+                    rows_train.append([id_node,F[dict_nodes[id_node]][0],F[dict_nodes[id_node]][1],train_labels[cod]])
 
-            if t == 'test':
-                rows_test.append([id_node,F[id_node][0],F[id_node][1]])
+                if t == 'test':
+                    rows_test.append([id_node,F[dict_nodes[id_node]][0],F[dict_nodes[id_node]][1]])
+        
 
 
         file_name_train = 'features_%s_pre_anotados_train.csv' % len(anotados)
