@@ -27,10 +27,10 @@ class ExtractFeatures:
     def filter_tokens(self, tokens_h, tokens_t):
         filtered_h, filtered_t = [], []
         for token in tokens_h:
-            if token in self.model.vocab:
+            if token in self.model.key_to_index:
                 filtered_h.append(token)
         for token in tokens_t:
-            if token in self.model.vocab:
+            if token in self.model.key_to_index:
                 filtered_t.append(token)
         return filtered_h, filtered_t
 
